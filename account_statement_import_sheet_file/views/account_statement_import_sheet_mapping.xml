@@ -109,6 +109,9 @@
                             <field name="bank_account_column" />
                         </group>
                     </group>
+                    <group string="Pre-Processor">
+                        <field name="preprocessor_code" />
+                    </group>
                 </sheet>
             </form>
         </field>

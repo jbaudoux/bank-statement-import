@@ -1,5 +1,6 @@
 # Copyright 2019 ForgeFlow, S.L.
 # Copyright 2020 CorporateHub (https://corporatehub.eu)
+# Copyright 2025 Jacques-Etienne Baudoux (BCIM) <je@bcim.be>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 import itertools
@@ -9,8 +10,10 @@ import re
 from collections.abc import Iterable
 from datetime import datetime
 from decimal import Decimal
-from io import StringIO
+from io import BytesIO, StringIO
 from os import path
+
+from PyPDF2 import PdfReader
 
 from odoo import api, models
 from odoo.exceptions import UserError
@@ -147,6 +150,10 @@ class AccountStatementImportSheetParser(models.TransientModel):
         ]
 
     def _parse_lines(self, mapping, data_file, currency_code):
+        if data_file[:4] == b"%PDF":
+            data_file = PdfReader(BytesIO(data_file))
+        data_file = mapping._eval_code(data_file)
+
         columns = dict()
         try:
             workbook = xlrd.open_workbook(
